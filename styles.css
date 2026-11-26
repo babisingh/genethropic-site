@@ -252,7 +252,7 @@ h1, h2, h3, p { margin: 0; }
 .advisor { background: var(--paper); border-radius: 12px; padding: 22px 26px; display: flex; flex-wrap: wrap; gap: 6px 28px; align-items: baseline; }
 .advisor div { flex: 1 1 220px; }
 .advisor h3 { font-size: 22px; font-weight: 700; }
-.advisor .role { color: var(--violet); font-size: 16px; }
+.advisor .role, .founder .role { color: var(--violet); font-size: 16px; }
 .advisor .role a { color: inherit; }
 .advisor p { flex: 2 1 280px; color: var(--ink-soft); }
 
