@@ -162,6 +162,15 @@ ${posts.slice(0, 3).map((p) => `    <li><time datetime="${p.date}">${niceDate(p.
 const archive = await archiveRecords();
 writeFileSync(`${OUT}/index.html`, home.replace('<!-- ARCHIVE-TICKER -->', ticker(archive)).replace('<!-- BLOGS -->', homeBlogs));
 
+// Shown for any address that does not exist.
+writeFileSync(`${OUT}/404.html`, page({
+  title: 'Page not found · Genethropic',
+  description: 'This page does not exist.',
+  body: `<section class="wrap blog">
+  <div class="blog-main"><h1>Page not found</h1><p class="empty" style="margin-top:28px">Nothing lives at this address. <a href="/">Back to the home page</a></p></div>
+</section>`,
+}));
+
 // b.logs opens on the newest entry; every entry also has its own address.
 writeFileSync(`${OUT}/${BLOG}/index.html`, blogPage(posts[0]));
 for (const p of posts) {
