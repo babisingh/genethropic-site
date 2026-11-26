@@ -1,0 +1,145 @@
+{
+ "count": 20,
+ "items": [
+  {
+   "id": "AGC-2026-000020",
+   "title": "Antibodies designed atom by atom against chosen epitopes",
+   "venue": "Nature",
+   "published_on": "2025-11-05",
+   "kind": "binder"
+  },
+  {
+   "id": "AGC-2026-000019",
+   "title": "Sequence design that reads the ligands, metals and DNA around a protein",
+   "venue": "Nature Methods",
+   "published_on": "2025-03-28",
+   "kind": "method"
+  },
+  {
+   "id": "AGC-2026-000018",
+   "title": "Designing peptide binders from sequence alone, with no target structure required",
+   "venue": "Science Advances",
+   "published_on": "2025-01-24",
+   "kind": "binder"
+  },
+  {
+   "id": "AGC-2026-000017",
+   "title": "A diffusion model that designs new proteins from simple specifications",
+   "venue": "Nature",
+   "published_on": "2023-07-11",
+   "kind": "method"
+  },
+  {
+   "id": "AGC-2026-000016",
+   "title": "A language model paired with SELEX writes DNA aptamers that beat the screened candidates",
+   "venue": "Nature Computational Science",
+   "published_on": "2026-03-11",
+   "kind": "binder"
+  },
+  {
+   "id": "AGC-2026-000015",
+   "title": "A designed macrocycle and protein pair give chemical control of cells",
+   "venue": "Nature Communications",
+   "published_on": "2026-05-18",
+   "kind": "switch"
+  },
+  {
+   "id": "AGC-2026-000014",
+   "title": "A genomic language model writes working genes from context alone",
+   "venue": "Nature",
+   "published_on": "2025-11-19",
+   "kind": "gene"
+  },
+  {
+   "id": "AGC-2026-000013",
+   "title": "AI-designed binders to GDF15 for a cachexia biosensor and a decoy therapeutic",
+   "venue": "Experimental and Molecular Medicine",
+   "published_on": "2026-05-08",
+   "kind": "binder"
+  },
+  {
+   "id": "AGC-2026-000012",
+   "title": "Launching a designed protein nanoparticle vaccine from mRNA",
+   "venue": "Science Translational Medicine",
+   "published_on": "2025-10-15",
+   "kind": "shell"
+  },
+  {
+   "id": "AGC-2026-000011",
+   "title": "Peptide binders designed from target sequence alone, with no structure required",
+   "venue": "Nature Biotechnology",
+   "published_on": "2025-08-13",
+   "kind": "binder"
+  },
+  {
+   "id": "AGC-2026-000010",
+   "title": "A compact AI-designed binder that boosts prime editing",
+   "venue": "Cell",
+   "published_on": "2025-08-05",
+   "kind": "binder"
+  },
+  {
+   "id": "AGC-2026-000009",
+   "title": "Diffusion-designed macrocycles bind four proteins with structures matching the models",
+   "venue": "Nature Chemical Biology",
+   "published_on": "2025-06-20",
+   "kind": "binder"
+  },
+  {
+   "id": "AGC-2026-000008",
+   "title": "Diffusion models design binders to shape-shifting disordered proteins",
+   "venue": "Nature",
+   "published_on": "2025-07-30",
+   "kind": "binder"
+  },
+  {
+   "id": "AGC-2026-000007",
+   "title": "A cortisol biosensor designed from scratch on a computer",
+   "venue": "Journal of the American Chemical Society",
+   "published_on": "2025-07-28",
+   "kind": "sensor"
+  },
+  {
+   "id": "AGC-2026-000006",
+   "title": "Machine learning picks AAV capsids that clear six tests at once",
+   "venue": "Nature Communications",
+   "published_on": "2024-08-04",
+   "kind": "shell"
+  },
+  {
+   "id": "AGC-2026-000005",
+   "title": "Deep learning designs proteins that grip flexible peptide hormones",
+   "venue": "Nature",
+   "published_on": "2023-12-18",
+   "kind": "binder"
+  },
+  {
+   "id": "AGC-2026-000004",
+   "title": "A designed chaperone switch dissolves condensates inside living cells",
+   "venue": "Cell Chemical Biology",
+   "published_on": "2025-02-07",
+   "kind": "switch"
+  },
+  {
+   "id": "AGC-2026-000003",
+   "title": "General protein language models matured seven human antibodies in two rounds",
+   "venue": "Nature Biotechnology",
+   "published_on": "2023-04-24",
+   "kind": "improver"
+  },
+  {
+   "id": "AGC-2026-000002",
+   "title": "Designed repeat proteins that read a peptide one triplet at a time",
+   "venue": "Nature",
+   "published_on": "2023-04-05",
+   "kind": "binder"
+  },
+  {
+   "id": "AGC-2026-000001",
+   "title": "Deep learning designs working luciferases from scratch",
+   "venue": "Nature",
+   "published_on": "2023-02-22",
+   "kind": "enzyme"
+  }
+ ]
+}
