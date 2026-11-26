@@ -3,6 +3,7 @@
 // b.logs entry (.md is written text, .html is a saved Claude artifact).
 import { readFileSync, writeFileSync, mkdirSync, rmSync, cpSync, readdirSync, existsSync } from 'node:fs';
 import { marked } from 'marked';
+import { createHash } from 'node:crypto';
 
 const BLOG = 'b.logs';
 const POSTS = process.env.POSTS_DIR || 'posts';
@@ -102,6 +103,9 @@ const fonts = home.match(/<link rel="(?:preconnect|stylesheet)" href="https:\/\/
 const icon = grab(/<link rel="icon"[^>]*>/);
 const intro = "B.'s lab notebook: experiments, side quests and half-finished results. Rough on purpose.";
 
+// The stylesheet's address changes whenever its contents do, so browsers never show an old copy.
+const CSS = `styles.css?v=${createHash('sha1').update(readFileSync('styles.css')).digest('hex').slice(0, 8)}`;
+
 const page = ({ title, description, body, head = '' }) => `<!doctype html>
 <html lang="en">
 <head>
@@ -112,7 +116,7 @@ const page = ({ title, description, body, head = '' }) => `<!doctype html>
 <meta name="theme-color" content="#dce6f0">
 ${icon}
 ${fonts}
-<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/${CSS}">
 ${head}</head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -137,7 +141,7 @@ const menu = (current) => `<aside class="blog-menu">
     ${posts.length ? `<details open>
       <summary>All entries (${posts.length})</summary>
       <ol>
-${posts.map((p) => `        <li><a href="/${BLOG}/${p.slug}/"${p === current ? ' aria-current="page"' : ''}><time datetime="${p.date}">${niceDate(p.date)}</time><span class="mini">${esc(p.short || p.title)}</span>${tag(p)}</a></li>`).join('\n')}
+${posts.map((p) => `        <li><a href="/${BLOG}/${p.slug}/"${p === current ? ' aria-current="page"' : ''}><time datetime="${p.date}">${niceDate(p.date)}</time><span class="mini">${esc(p.short || p.title)}</span> ${tag(p)}</a></li>`).join('\n')}
       </ol>
     </details>
     <a class="feed-link" href="/${BLOG}/feed.xml">Follow by RSS</a>` : ''}
@@ -207,7 +211,7 @@ ${posts.slice(0, 3).map((p) => `    <li><time datetime="${p.date}">${niceDate(p.
   <a class="more-link" href="/${BLOG}/">All entries</a>
 </section>` : '';
 const archive = await archiveRecords();
-writeFileSync(`${OUT}/index.html`, home.replace('</head>', feedLink + '</head>').replace('<!-- ARCHIVE-TICKER -->', ticker(archive)).replace('<!-- BLOGS -->', homeBlogs));
+writeFileSync(`${OUT}/index.html`, home.replace('href="styles.css"', `href="${CSS}"`).replace('</head>', feedLink + '</head>').replace('<!-- ARCHIVE-TICKER -->', ticker(archive)).replace('<!-- BLOGS -->', homeBlogs));
 
 // Shown for any address that does not exist.
 writeFileSync(`${OUT}/404.html`, page({
