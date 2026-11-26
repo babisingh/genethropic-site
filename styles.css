@@ -305,13 +305,6 @@ h1, h2, h3, p { margin: 0; }
 .post-meta .tag { align-self: center; }
 .blog-menu li a[aria-current] { border-left-color: var(--violet); color: var(--violet); background: var(--paper); }
 .blog-main h1 { font-family: var(--display); font-weight: 700; font-size: clamp(30px, 4vw, 50px); line-height: 1.06; letter-spacing: -0.03em; text-wrap: balance; }
-/* b.logs pages: white page, the entry in a panel with a powder-blue outline. */
-body:has(.blog) { background: #ffffff; }
-.blog-main { background: #ffffff; border: 2px solid var(--line); border-radius: 16px; padding: 40px 44px 36px; }
-.blog-menu ol { border: 2px solid var(--line); border-radius: 12px; overflow: hidden; }
-.blog-menu li:last-child { border-bottom: 0; }
-.blog-menu li a[aria-current] { background: var(--ground); }
-@media (max-width: 860px) { .blog-main { padding: 24px 18px; } }
 .blog-main .empty { padding: 28px; background: var(--paper); border-radius: 12px; }
 .post-meta { display: flex; flex-wrap: wrap; gap: 4px 20px; align-items: baseline; font-family: var(--pixel); font-weight: 500; font-size: 17px; color: var(--olive); margin-top: 14px; }
 .post-meta a { font-family: var(--body); font-weight: 700; font-size: 15px; }
