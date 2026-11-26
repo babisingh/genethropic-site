@@ -100,7 +100,7 @@ h1, h2, h3, p { margin: 0; }
 .hero .btn { font-size: 17px; padding-block: 15px; }
 
 .ideogram { display: flex; height: 34px; border-radius: 17px; overflow: hidden; border: 2px solid var(--ink); }
-.wonder { font-family: var(--hand); font-size: clamp(22px, 2.1vw, 27px); line-height: 1.2; color: #655d7c; margin: 18px 0 40px; padding-inline: 16px; min-height: 3.6em; transition: opacity 0.4s; }
+.wonder { font-family: var(--hand); font-size: clamp(19px, 1.6vw, 22px); line-height: 1.2; color: #655d7c; margin: 8px 0 44px; padding-inline: 16px; min-height: 3.6em; transition: opacity 0.4s; }
 .wonder span { color: var(--ink-soft); }
 .wonder.out { opacity: 0; }
 @media (prefers-reduced-motion: reduce) { .wonder { transition: none; } }
