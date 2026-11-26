@@ -100,18 +100,20 @@ h1, h2, h3, p { margin: 0; }
 .hero .btn { font-size: 17px; padding-block: 15px; }
 
 .ideogram { display: flex; height: 34px; border-radius: 17px; overflow: hidden; border: 2px solid var(--ink); }
-.wonder { font-family: var(--hand); font-size: clamp(19px, 1.6vw, 22px); line-height: 1.2; color: #655d7c; margin: 8px 0 44px; padding-inline: 16px; min-height: 3.6em; transition: opacity 0.4s; }
-.wonder span { color: var(--ink-soft); }
-.wonder.out { opacity: 0; }
-@media (prefers-reduced-motion: reduce) { .wonder { transition: none; } }
-@media (min-width: 600px) { .wonder { min-height: 2.4em; } }
-@media (min-width: 900px) { .wonder { min-height: 1.2em; } }
 .ideogram i { display: block; }
 .ideogram .a { background: var(--paper); }
 .ideogram .b { background: #6b637f; }
 .ideogram .c { background: var(--ink); }
 .ideogram .d { background: #a79fb8; }
 .ideogram .e { background: var(--violet); }
+.wonder { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; font-size: clamp(14px, 1.2vw, 15.5px); line-height: 1.45; color: #4f6682; margin: 10px 0 44px; padding-inline: 16px; min-height: 5.8em; }
+.wonder i { font-style: normal; }
+.wonder span { color: #34465b; }
+.wonder b { display: inline-block; width: 0.55em; height: 1.05em; margin-left: 2px; vertical-align: text-bottom; background: #4f6682; animation: caret 1s steps(1) infinite; }
+@keyframes caret { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .wonder b { display: none; } }
+@media (min-width: 600px) { .wonder { min-height: 2.9em; } }
+@media (min-width: 1000px) { .wonder { min-height: 1.45em; } }
 
 /* Funder strip */
 .funder { background: var(--paper); }

@@ -15,7 +15,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%236a3d9a'/%3E%3Cpath d='M5 4h6v2H7v4h2V8h2v4H5z' fill='%23f6f3fb'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Pixelify+Sans:wght@500;600&family=Caveat:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Pixelify+Sans:wght@500;600&family=Caveat:wght@500&family=IBM+Plex+Mono&display=swap">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -264,21 +264,42 @@
   ];
   var line = document.getElementById('wonder');
   if (!line) return;
-  var index = 0, paused = false;
-  line.addEventListener('mouseenter', function () { paused = true; });
-  line.addEventListener('mouseleave', function () { paused = false; });
-  setInterval(function () {
-    if (paused || document.hidden) return;
-    index = (index + 1) % questions.length;
-    line.classList.add('out');
-    setTimeout(function () {
-      line.textContent = questions[index][0] + ' ';
-      var ask = document.createElement('span');
-      ask.textContent = questions[index][1];
-      line.appendChild(ask);
-      line.classList.remove('out');
-    }, 400);
-  }, 6000);
+  var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var index = 0, hovered = false;
+  line.addEventListener('mouseenter', function () { hovered = true; });
+  line.addEventListener('mouseleave', function () { hovered = false; });
+
+  // Screen readers get the whole sentence; the typed letters are decoration.
+  function setUp(pair) {
+    line.textContent = '';
+    line.setAttribute('aria-label', pair[0] + ' ' + pair[1]);
+    var first = document.createElement('i'), second = document.createElement('span'), caret = document.createElement('b');
+    [first, second, caret].forEach(function (el) { el.setAttribute('aria-hidden', 'true'); line.appendChild(el); });
+    return [first, second];
+  }
+
+  function type(pair, done) {
+    var parts = setUp(pair), text = [pair[0] + ' ', pair[1]], part = 0, at = 0;
+    if (still) { parts[0].textContent = text[0]; parts[1].textContent = text[1]; return done(); }
+    (function step() {
+      if (at >= text[part].length) { part += 1; at = 0; }
+      if (part > 1) return done();
+      at += 1;
+      parts[part].textContent = text[part].slice(0, at);
+      var last = text[part][at - 1];
+      setTimeout(step, last === '.' || last === ',' ? 320 : 28 + Math.random() * 30);
+    })();
+  }
+
+  function hold() {
+    setTimeout(function wait() {
+      if (hovered || document.hidden) return setTimeout(wait, 500);
+      index = (index + 1) % questions.length;
+      type(questions[index], hold);
+    }, 4500);
+  }
+
+  type(questions[0], hold);
 })();
 
 // Demo videos load only when someone asks for them.
