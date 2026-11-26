@@ -27,7 +27,7 @@ delete its file.
 
 `build.mjs` copies the home page into `dist/`, fills the archive ticker with
 the newest records from artgene-archive.org, and turns each file in `posts/`
-into a page. Netlify runs it on every change. To try it on your own computer:
+into a page. Cloudflare Pages runs it on every change. To try it on your own computer:
 
     npm install
     node build.mjs
