@@ -48,10 +48,11 @@
   </div>
 </section>
 
-<div class="wrap" aria-hidden="true">
-  <div class="ideogram">
+<div class="wrap">
+  <div class="ideogram" aria-hidden="true">
     <i class="a" style="flex:3"></i><i class="b" style="flex:1"></i><i class="a" style="flex:2"></i><i class="c" style="flex:2"></i><i class="d" style="flex:1"></i><i class="a" style="flex:3"></i><i class="c" style="flex:1"></i><i class="d" style="flex:2"></i><i class="e" style="flex:1"></i><i class="a" style="flex:2"></i><i class="b" style="flex:3"></i><i class="a" style="flex:1"></i><i class="c" style="flex:2"></i><i class="a" style="flex:4"></i><i class="d" style="flex:1"></i><i class="b" style="flex:2"></i><i class="a" style="flex:3"></i><i class="c" style="flex:1"></i><i class="a" style="flex:2"></i>
   </div>
+  <p class="wonder" id="wonder">A weaver bird raised alone still ties its species' knot. <span>Where is the nest plan kept?</span></p>
 </div>
 
 <section class="funder" aria-label="Funding">
@@ -247,6 +248,39 @@
 </footer>
 
 <script>
+// Open questions under the ideogram, one at a time.
+(function () {
+  var questions = [
+    ["A weaver bird raised alone still ties its species' knot.", "Where is the nest plan kept?"],
+    ["An octopus never meets its parents.", "Who taught it to hunt and hide?"],
+    ["A monarch butterfly flies to a forest its great-grandparents left.", "Where is the map?"],
+    ["A spider spins a perfect web on its first try.", "Where is the geometry written?"],
+    ["About 20,000 genes wire 86 billion neurons.", "How do so few instructions place so many?"],
+    ["Every cell keeps a 24-hour clock, and a cicada counts 17 years.", "Where is the counter?"],
+    ["A salamander regrows a leg with genes we mostly share.", "What does it read that we skip?"],
+    ["A Greenland shark lives 400 years and a mouse two.", "Who sets the timer?"],
+    ["Your left hand stops growing when the right one does.", "How does it know?"],
+    ["Only about 2% of our DNA codes for proteins.", "What is the rest saying?"]
+  ];
+  var line = document.getElementById('wonder');
+  if (!line) return;
+  var index = 0, paused = false;
+  line.addEventListener('mouseenter', function () { paused = true; });
+  line.addEventListener('mouseleave', function () { paused = false; });
+  setInterval(function () {
+    if (paused || document.hidden) return;
+    index = (index + 1) % questions.length;
+    line.classList.add('out');
+    setTimeout(function () {
+      line.textContent = questions[index][0] + ' ';
+      var ask = document.createElement('span');
+      ask.textContent = questions[index][1];
+      line.appendChild(ask);
+      line.classList.remove('out');
+    }, 400);
+  }, 6000);
+})();
+
 // Demo videos load only when someone asks for them.
 document.querySelectorAll('.demo').forEach(function (button) {
   button.addEventListener('click', function () {

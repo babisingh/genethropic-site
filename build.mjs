@@ -88,7 +88,7 @@ const header = toRoot(grab(/<header[\s\S]*?<\/header>/));
 const footer = toRoot(grab(/<footer[\s\S]*?<\/footer>/));
 const fonts = home.match(/<link rel="(?:preconnect|stylesheet)" href="https:\/\/fonts[^>]*>/g).join('\n');
 const icon = grab(/<link rel="icon"[^>]*>/);
-const intro = "Babita's lab notebook: experiments, side quests and half-finished results. Rough on purpose.";
+const intro = "B.'s lab notebook: experiments, side quests and half-finished results. Rough on purpose.";
 
 const page = ({ title, description, body }) => `<!doctype html>
 <html lang="en">
