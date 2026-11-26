@@ -79,7 +79,7 @@ function readPost(file) {
     // A picture followed by a line in italics becomes a figure with a caption; every picture can be enlarged.
     .replace(/<p>(<img [^>]*>)<\/p>\s*<p><em>([\s\S]*?)<\/em><\/p>/g, '<figure>$1<figcaption>$2</figcaption></figure>')
     .replace(/<img src="([^"]+)"([^>]*)>/g, '<a class="zoom" href="$1"><img src="$1"$2 loading="lazy"></a>');
-  const words = (m ? m[2] : raw).split(/\s+/).filter(Boolean).length;
+  const words = (m ? m[2] : raw).replace(/<svg[\s\S]*?<\/svg>|<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
   return {
     slug, date, title: meta.title, summary: meta.summary || '', html,
     short: meta.short || '', label: meta.label || '',
