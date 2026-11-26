@@ -8,6 +8,9 @@ const BLOG = 'b.logs';
 const POSTS = process.env.POSTS_DIR || 'posts';
 const OUT = process.env.OUT_DIR || 'dist';
 const ARCHIVE = 'https://artgene-archive.org';
+const SITE = 'https://genethropic.com';
+const AUTHOR = 'B.';
+const NOTE_TO = 'b@genethropic.com';
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const niceDate = (d) => new Date(d + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
 
@@ -71,8 +74,17 @@ function readPost(file) {
   const html = marked.parse(m ? m[2] : raw)
     .replace(/(src|href)="images\//g, `$1="/${BLOG}/images/`)
     .replace(/<a href="(https?:\/\/[^"]+)"/g, '<a href="$1" target="_blank" rel="noopener"')
-    .replace(/<table>/g, '<div class="table-scroll"><table>').replace(/<\/table>/g, '</table></div>');
-  return { slug, date, title: meta.title, summary: meta.summary || '', html };
+    .replace(/<table>/g, '<div class="table-scroll"><table>').replace(/<\/table>/g, '</table></div>')
+    // A picture followed by a line in italics becomes a figure with a caption; every picture can be enlarged.
+    .replace(/<p>(<img [^>]*>)<\/p>\s*<p><em>([\s\S]*?)<\/em><\/p>/g, '<figure>$1<figcaption>$2</figcaption></figure>')
+    .replace(/<img src="([^"]+)"([^>]*)>/g, '<a class="zoom" href="$1"><img src="$1"$2 loading="lazy"></a>');
+  const words = (m ? m[2] : raw).split(/\s+/).filter(Boolean).length;
+  return {
+    slug, date, title: meta.title, summary: meta.summary || '', html,
+    short: meta.short || '', label: meta.label || '',
+    image: meta.image ? `/${BLOG}/${meta.image}` : '',
+    minutes: Math.max(1, Math.round(words / 220)),
+  };
 }
 
 const posts = (existsSync(POSTS) ? readdirSync(POSTS) : [])
@@ -90,7 +102,7 @@ const fonts = home.match(/<link rel="(?:preconnect|stylesheet)" href="https:\/\/
 const icon = grab(/<link rel="icon"[^>]*>/);
 const intro = "B.'s lab notebook: experiments, side quests and half-finished results. Rough on purpose.";
 
-const page = ({ title, description, body }) => `<!doctype html>
+const page = ({ title, description, body, head = '' }) => `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -101,7 +113,7 @@ const page = ({ title, description, body }) => `<!doctype html>
 ${icon}
 ${fonts}
 <link rel="stylesheet" href="/styles.css">
-</head>
+${head}</head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 
@@ -116,32 +128,67 @@ ${footer}
 </html>
 `;
 
+const tag = (p) => (p.label ? `<span class="tag">${esc(p.label)}</span>` : '');
+const feedLink = `<link rel="alternate" type="application/rss+xml" title="b.logs · Genethropic" href="/${BLOG}/feed.xml">\n`;
+
 const menu = (current) => `<aside class="blog-menu">
     <a class="note" href="/${BLOG}/">b.logs</a>
     <p>${esc(intro)}</p>
     ${posts.length ? `<details open>
       <summary>All entries (${posts.length})</summary>
       <ol>
-${posts.map((p) => `        <li><a href="/${BLOG}/${p.slug}/"${p === current ? ' aria-current="page"' : ''}><time datetime="${p.date}">${niceDate(p.date)}</time>${esc(p.title)}</a></li>`).join('\n')}
+${posts.map((p) => `        <li><a href="/${BLOG}/${p.slug}/"${p === current ? ' aria-current="page"' : ''}><time datetime="${p.date}">${niceDate(p.date)}</time><span class="mini">${esc(p.short || p.title)}</span>${tag(p)}</a></li>`).join('\n')}
       </ol>
-    </details>` : ''}
+    </details>
+    <a class="feed-link" href="/${BLOG}/feed.xml">Follow by RSS</a>` : ''}
   </aside>`;
+
+// The end of an entry: links to the neighbouring entries, and a button to write back.
+const postEnd = (p) => {
+  const i = posts.indexOf(p);
+  const link = (q, word) => (q ? `<a href="/${BLOG}/${q.slug}/"><span>${word}</span>${esc(q.short || q.title)}</a>` : '');
+  const around = link(posts[i + 1], 'Earlier') + link(posts[i - 1], 'Later');
+  return `<div class="post-end">
+      ${around ? `<nav class="post-around" aria-label="More entries">${around}</nav>` : ''}
+      <a class="btn accent leave-note" href="mailto:${NOTE_TO}?subject=${encodeURIComponent(`Note on: ${p.title}`)}">Leave a note</a>
+    </div>`;
+};
+
+// Clicking a picture shows it full size; without scripts the picture opens on its own.
+const zoomScript = `<dialog class="lightbox" aria-label="Enlarged picture"><img alt=""></dialog>
+<script>
+(() => {
+  const box = document.querySelector('.lightbox'); if (!box || !box.showModal) return;
+  const big = box.querySelector('img');
+  document.querySelectorAll('.post-body a.zoom').forEach((a) => a.addEventListener('click', (e) => {
+    e.preventDefault(); big.src = a.href; big.alt = a.querySelector('img').alt; box.showModal();
+  }));
+  box.addEventListener('click', () => box.close());
+})();
+</script>`;
 
 const entry = (p) => `<article class="blog-main">
     <h1>${esc(p.title)}</h1>
-    <div class="post-meta"><time datetime="${p.date}">${niceDate(p.date)}</time>${p.artifact ? `<a href="/${BLOG}/${p.slug}/artifact.html" target="_blank" rel="noopener">Open full screen</a>` : ''}</div>
+    <div class="post-meta"><time datetime="${p.date}">${niceDate(p.date)}</time><span>by ${AUTHOR}</span>${p.minutes ? `<span>${p.minutes} min read</span>` : ''}${tag(p)}${p.artifact ? `<a href="/${BLOG}/${p.slug}/artifact.html" target="_blank" rel="noopener">Open full screen</a>` : ''}</div>
     ${p.artifact
       ? `<iframe class="post-frame" src="/${BLOG}/${p.slug}/artifact.html" title="${esc(p.title)}" sandbox="allow-scripts allow-popups allow-forms allow-downloads"></iframe>`
       : `<div class="post-body">\n${p.html}\n    </div>`}
+    ${postEnd(p)}
   </article>`;
 
 const blogPage = (p) => page({
   title: p ? `${p.title} · b.logs · Genethropic` : 'b.logs · Genethropic',
   description: (p && (p.summary || p.title)) || intro,
+  // What a shared link shows: the title, the summary and the entry's picture.
+  head: feedLink + (p ? `<meta property="og:type" content="article">
+<meta property="og:title" content="${esc(p.title)}">
+<meta property="og:description" content="${esc(p.summary || intro)}">
+<meta property="og:url" content="${SITE}/${BLOG}/${p.slug}/">
+${p.image ? `<meta property="og:image" content="${SITE}${p.image}">\n<meta name="twitter:card" content="summary_large_image">\n` : ''}` : ''),
   body: `<section class="wrap blog">
   ${menu(p)}
   ${p ? entry(p) : '<div class="blog-main"><h1>Nothing logged yet</h1><p class="empty" style="margin-top:28px">The first entries are on their way.</p></div>'}
-</section>`,
+</section>${p && p.html && p.html.includes('class="zoom"') ? '\n' + zoomScript : ''}`,
 });
 
 rmSync(OUT, { recursive: true, force: true });
@@ -155,12 +202,12 @@ const homeBlogs = posts.length ? `<section class="blogs-home wrap" id="blogs">
   <div class="note">b.logs</div>
   <h2 class="section-title">Fresh from the tinkering bench</h2>
   <ol class="log-list">
-${posts.slice(0, 3).map((p) => `    <li><time datetime="${p.date}">${niceDate(p.date)}</time><a href="/${BLOG}/${p.slug}/">${esc(p.title)}</a>${p.summary ? `<p>${esc(p.summary)}</p>` : ''}</li>`).join('\n')}
+${posts.slice(0, 3).map((p) => `    <li><time datetime="${p.date}">${niceDate(p.date)}${tag(p)}</time><a href="/${BLOG}/${p.slug}/">${esc(p.title)}</a>${p.summary ? `<p>${esc(p.summary)}</p>` : ''}</li>`).join('\n')}
   </ol>
   <a class="more-link" href="/${BLOG}/">All entries</a>
 </section>` : '';
 const archive = await archiveRecords();
-writeFileSync(`${OUT}/index.html`, home.replace('<!-- ARCHIVE-TICKER -->', ticker(archive)).replace('<!-- BLOGS -->', homeBlogs));
+writeFileSync(`${OUT}/index.html`, home.replace('</head>', feedLink + '</head>').replace('<!-- ARCHIVE-TICKER -->', ticker(archive)).replace('<!-- BLOGS -->', homeBlogs));
 
 // Shown for any address that does not exist.
 writeFileSync(`${OUT}/404.html`, page({
@@ -178,5 +225,26 @@ for (const p of posts) {
   writeFileSync(`${OUT}/${BLOG}/${p.slug}/index.html`, blogPage(p));
   if (p.artifact) writeFileSync(`${OUT}/${BLOG}/${p.slug}/artifact.html`, p.artifact);
 }
+
+// A feed, so b.logs can be followed in a feed reader.
+writeFileSync(`${OUT}/${BLOG}/feed.xml`, `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title>b.logs · Genethropic</title>
+<link>${SITE}/${BLOG}/</link>
+<atom:link href="${SITE}/${BLOG}/feed.xml" rel="self" type="application/rss+xml"/>
+<description>${esc(intro)}</description>
+<language>en</language>
+${posts.map((p) => `<item>
+<title>${esc(p.title)}</title>
+<link>${SITE}/${BLOG}/${p.slug}/</link>
+<guid>${SITE}/${BLOG}/${p.slug}/</guid>
+<pubDate>${new Date(p.date + 'T09:00:00Z').toUTCString()}</pubDate>
+<dc:creator>${AUTHOR}</dc:creator>
+<description>${esc(p.summary || p.title)}</description>
+</item>`).join('\n')}
+</channel>
+</rss>
+`);
 
 console.log(`Built ${posts.length} b.logs entr${posts.length === 1 ? 'y' : 'ies'} and ${archive ? archive.items.length : 0} archive records into ${OUT}/`);
