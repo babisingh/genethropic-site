@@ -267,4 +267,46 @@ ${posts.map((p) => `<url><loc>${SITE}/${BLOG}/${p.slug}/</loc><lastmod>${p.date}
 // Where the map is. Nothing here allows or blocks a crawler; that stays as it was.
 writeFileSync(`${OUT}/robots.txt`, `Sitemap: ${SITE}/sitemap.xml\n`);
 
+// A plain guide for AI assistants (the llms.txt convention): what Genethropic is
+// and where each part lives, in the home page's own words. Each tool's address is
+// read from its button on the home page, so the two can never disagree.
+const toolLink = (name) => {
+  const found = home.match(new RegExp(`href="([^"]+)"[^>]*>Open ${name}<`));
+  if (!found) console.warn(`llms.txt: no "Open ${name}" button on the home page; linking to the tools section.`);
+  return found ? found[1] : `${SITE}/#tools`;
+};
+writeFileSync(`${OUT}/llms.txt`, `# Genethropic
+
+> Genethropic builds open, AI-driven tools for gene and genomics data analysis, and works on keeping AI-designed biology safe. It also runs ArtGene Archive, a public catalogue of AI-designed protein and gene sequences.
+
+Genethropic is a small community of researchers and AI engineers across Barcelona, Berlin and Boston. Its founder, Babita Singh, PhD, is a bioinformatician. A 2026 Foresight Institute AI Node grant supports its TINSEL project.
+
+## Tools for gene and genomics data analysis
+
+- [Gene-Story](${toolLink('Gene-Story')}): read the human genome like a book, one chromosome per chapter. It covers all 62,700 human genes, including pseudogenes and lncRNAs.
+- [Gene-Intel](${toolLink('Gene-Intel')}): ask in plain language to find a gene's functional twin in a very different species. It compares how genes are built and which genes sit next to them, across 15 species and five kingdoms of life.
+- [Gene-Maps](${toolLink('Gene-Maps')}): look up where a gene sits in the folded 3D genome: its neighbours, how risky a CRISPR edit would be, and how druggable it looks.
+
+## ArtGene Archive
+
+- [ArtGene Archive](${ARCHIVE}/): a public catalogue of protein and gene sequences designed by AI models, from papers, preprints and authors' own deposits. Every sequence is screened for biosafety before it is listed.
+- [Submit a sequence](${ARCHIVE}/submit): authors deposit AI-designed sequences so they can be screened, cited and found.
+- [Source code](https://github.com/babisingh/artgene-archive)
+
+## Research
+
+- TINSEL, funded by the Foresight Institute: an open protocol that lets protein-design tools check, sign and trace every sequence they generate.
+- [BioClaw](https://github.com/babisingh/BioClaw): a proof of concept in which AI agents reproduce a lab protocol end to end.
+
+## Writing
+
+- [b.logs](${SITE}/${BLOG}/): ${intro} [Feed](${SITE}/${BLOG}/feed.xml).
+
+## Contact
+
+- [Email](mailto:${NOTE_TO})
+- [LinkedIn](https://www.linkedin.com/company/145506780/)
+- [GitHub](https://github.com/babisingh)
+`);
+
 console.log(`Built ${posts.length} b.logs entr${posts.length === 1 ? 'y' : 'ies'} and ${archive ? archive.items.length : 0} archive records into ${OUT}/`);
