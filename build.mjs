@@ -211,7 +211,9 @@ ${posts.slice(0, 3).map((p) => `    <li><time datetime="${p.date}">${niceDate(p.
   <a class="more-link" href="/${BLOG}/">All entries</a>
 </section>` : '';
 const archive = await archiveRecords();
-writeFileSync(`${OUT}/index.html`, home.replace('href="styles.css"', `href="${CSS}"`).replace('</head>', feedLink + '</head>').replace('<!-- ARCHIVE-TICKER -->', ticker(archive)).replace('<!-- BLOGS -->', homeBlogs));
+// The one address search engines should use for the home page, whichever way a visitor arrived.
+const canonical = `<link rel="canonical" href="${SITE}/">\n`;
+writeFileSync(`${OUT}/index.html`, home.replace('href="styles.css"', `href="${CSS}"`).replace('</head>', canonical + feedLink + '</head>').replace('<!-- ARCHIVE-TICKER -->', ticker(archive)).replace('<!-- BLOGS -->', homeBlogs));
 
 // Shown for any address that does not exist.
 writeFileSync(`${OUT}/404.html`, page({
@@ -250,5 +252,19 @@ ${posts.map((p) => `<item>
 </channel>
 </rss>
 `);
+
+// A map of the site for search engines: the home page, b.logs, and every entry,
+// each with the date it was written. Built from the same list as the pages, so a
+// new entry is in the map the moment it is published.
+writeFileSync(`${OUT}/sitemap.xml`, `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url><loc>${SITE}/</loc></url>
+<url><loc>${SITE}/${BLOG}/</loc>${posts[0] ? `<lastmod>${posts[0].date}</lastmod>` : ''}</url>
+${posts.map((p) => `<url><loc>${SITE}/${BLOG}/${p.slug}/</loc><lastmod>${p.date}</lastmod></url>`).join('\n')}
+</urlset>
+`);
+
+// Where the map is. Nothing here allows or blocks a crawler; that stays as it was.
+writeFileSync(`${OUT}/robots.txt`, `Sitemap: ${SITE}/sitemap.xml\n`);
 
 console.log(`Built ${posts.length} b.logs entr${posts.length === 1 ? 'y' : 'ies'} and ${archive ? archive.items.length : 0} archive records into ${OUT}/`);
